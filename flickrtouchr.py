@@ -294,7 +294,7 @@ if __name__ == '__main__':
                 photoid = photo.getAttribute("id")
 
                 # The target
-                target = dir + "/" + photoid + ".jpg"
+                target = dir.decode("utf8", "ignore") + "/" + photoid + ".jpg"
 
                 # Skip files that exist
                 if os.access(target, os.R_OK):
