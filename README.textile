@@ -1,6 +1,15 @@
 A Python script to grab all your photos from flickr and dump them into a directory, organized into folders by set name.
 
-Original author is "Colm MacCárthaigh":http://www.stdlib.net/~colmmacc/
+Original author is "Colm MacCárthaigh":http://www.stdlib.net/~colmmacc/.
 
 Changes include tweaks to download full-size original images and improvements in handling UTF8 file and photoset names.
+
+Run it like this:
+
+<pre>
+mkdir FlickrBackupFolder
+python flickrtouchr.py FlickrBackupFolder
+</pre>
+
+You'll be prompted to authorize with Flickr, and then the magic happens.
 
