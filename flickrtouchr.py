@@ -171,11 +171,12 @@ def getphoto(id, token, filename):
         sizes =  dom.getElementsByTagName("size")
 
         # Grab the original if it exists
-        if (sizes[-2].getAttribute("label") == "Original"):
-            imgurl = sizes[-2].getAttribute("source")
-        else:
-            imgurl = sizes[-1].getAttribute("source")
-    
+				if (sizes[-1].getAttribute("label") == "Original"):
+						imgurl = sizes[-1].getAttribute("source")
+				else:
+						print "Failed to get original for photo id " + id
+
+
         # Free the DOM memory
         dom.unlink()
 
