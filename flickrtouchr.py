@@ -300,10 +300,11 @@ if __name__ == '__main__':
 
                 # Skip files that exist
                 if os.access(target, os.R_OK):
+                    inodes[photoid] = target
                     continue
                 
                 # Look it up in our dictionary of inodes first
-                if inodes.has_key(photoid) and os.access(inodes[photoid], os.R_OK):
+                if photoid in inodes and inodes[photoid] and os.access(inodes[photoid], os.R_OK):
                     # woo, we have it already, use a hard-link
                     os.link(inodes[photoid], target)
                 else:
