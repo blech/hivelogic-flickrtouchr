@@ -20,6 +20,7 @@ import xml.dom.minidom
 import webbrowser
 import urlparse
 import urllib2
+import unicodedata
 import cPickle
 import md5
 import sys
@@ -238,6 +239,7 @@ if __name__ == '__main__':
     for set in sets:
         pid = set.getAttribute("id")
         dir = getText(set.getElementsByTagName("title")[0].childNodes)
+        dir = unicodedata.normalize('NFKD', dir.decode("utf-8", "ignore")).encode('ASCII', 'ignore') # Normalize to ASCII
 
         # Build the list of photos
         url   = "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos"
@@ -294,7 +296,7 @@ if __name__ == '__main__':
                 photoid = photo.getAttribute("id")
 
                 # The target
-                target = dir.decode("utf8", "ignore") + "/" + photoid + ".jpg"
+                target = dir + "/" + photoid + ".jpg"
 
                 # Skip files that exist
                 if os.access(target, os.R_OK):
