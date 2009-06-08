@@ -193,7 +193,29 @@ def getphoto(id, token, filename):
         return filename
     except:
         print "Failed to retrieve photo id " + id
+
+#
+# Get photo metadata from the server and save it in a "sidecar" file
+#
+def build_sidecar(photoid, photosecret, dir):
+    print "%s %s in %s" % (photoid, photosecret, dir)
     
+    # Get metadata (description, dates, etc) for this photo
+    url = "http://api.flickr.com/services/rest/?method=flickr.photos.getInfo"
+    
+    request = url + "&photo_id=" + photoid + "&secret=" + photosecret
+    
+    # Sign the url
+    request = flickrsign(request, config["token"])
+    
+    # Make the request
+    response = urllib2.urlopen(request)
+
+    # Parse the XML
+    dom = xml.dom.minidom.parse(response)
+    
+    # ... and presumably get other information and write files
+
 ######## Main Application ##########
 if __name__ == '__main__':
 
@@ -318,22 +340,3 @@ if __name__ == '__main__':
 
             # Move on the next page
             page = page + 1
-
-def build_sidecar(photoid, photosecret, dir):
-    print "%s %s in %s" % (photoid, photosecret, dir)
-    
-    # Get metadata (description, dates, etc) for this photo
-    url = "http://api.flickr.com/services/rest/?method=flickr.photos.getInfo"
-    
-    request = url + "&photo_id=" + photoid + "&secret=" + photosecret
-    
-    # Sign the url
-    request = flickrsign(request, config["token"])
-    
-    # Make the request
-    response = urllib2.urlopen(request)
-
-    # Parse the XML
-    dom = xml.dom.minidom.parse(response)
-    
-    # ... and presumably get other information and write files
