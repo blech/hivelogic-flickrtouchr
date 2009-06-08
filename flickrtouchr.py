@@ -20,6 +20,7 @@ import xml.dom.minidom
 import webbrowser
 import urlparse
 import urllib2
+import unicodedata
 import cPickle
 import md5
 import sys
@@ -171,11 +172,12 @@ def getphoto(id, token, filename):
         sizes =  dom.getElementsByTagName("size")
 
         # Grab the original if it exists
-        if (sizes[-2].getAttribute("label") == "Original"):
-            imgurl = sizes[-2].getAttribute("source")
+        if (sizes[-1].getAttribute("label") == "Original"):
+          imgurl = sizes[-1].getAttribute("source")
         else:
-            imgurl = sizes[-1].getAttribute("source")
-    
+          print "Failed to get original for photo id " + id
+
+
         # Free the DOM memory
         dom.unlink()
 
@@ -237,6 +239,7 @@ if __name__ == '__main__':
     for set in sets:
         pid = set.getAttribute("id")
         dir = getText(set.getElementsByTagName("title")[0].childNodes)
+        dir = unicodedata.normalize('NFKD', dir.decode("utf-8", "ignore")).encode('ASCII', 'ignore') # Normalize to ASCII
 
         # Build the list of photos
         url   = "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos"
@@ -303,10 +306,11 @@ if __name__ == '__main__':
 
                 # Skip files that exist
                 if os.access(target, os.R_OK):
+                    inodes[photoid] = target
                     continue
                 
                 # Look it up in our dictionary of inodes first
-                if inodes.has_key(photoid) and os.access(inodes[photoid], os.R_OK):
+                if photoid in inodes and inodes[photoid] and os.access(inodes[photoid], os.R_OK):
                     # woo, we have it already, use a hard-link
                     os.link(inodes[photoid], target)
                 else:
