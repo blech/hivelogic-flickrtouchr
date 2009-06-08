@@ -256,6 +256,9 @@ if __name__ == '__main__':
     url   = "http://api.flickr.com/services/rest/?method=flickr.favorites.getList"
     urls.append( (url, "Favourites") )
 
+    # TODO add the user's comments - potentially need a switch for this, as it's expensive
+    # flickr.activity.userComments
+
     # Time to get the photos
     inodes = {}
     for (url , dir) in urls:
@@ -295,6 +298,9 @@ if __name__ == '__main__':
                 # The target
                 target = dir + "/" + photoid + ".jpg"
 
+                # TODO set up sidecar
+                write_sidecar(photoid, photo.getAttribute("secret"), dir)
+
                 # Skip files that exist
                 if os.access(target, os.R_OK):
                     continue
@@ -308,3 +314,22 @@ if __name__ == '__main__':
 
             # Move on the next page
             page = page + 1
+
+def build_sidecar(photoid, photosecret, dir):
+    print "%s %s in %s" % (photoid, photosecret, dir)
+    
+    # Get metadata (description, dates, etc) for this photo
+    url = "http://api.flickr.com/services/rest/?method=flickr.photos.getInfo"
+    
+    request = url + "&photo_id=" + photoid + "&secret=" + photosecret
+    
+    # Sign the url
+    request = flickrsign(request, config["token"])
+    
+    # Make the request
+    response = urllib2.urlopen(request)
+
+    # Parse the XML
+    dom = xml.dom.minidom.parse(response)
+    
+    # ... and presumably get other information and write files
