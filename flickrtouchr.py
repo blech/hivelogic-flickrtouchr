@@ -277,6 +277,9 @@ if __name__ == '__main__':
     url   = "http://api.flickr.com/services/rest/?method=flickr.photos.getNotInSet"
     urls.append( (url, "No Set") )
 
+    # Free the DOM memory
+    dom.unlink()
+
     # Add the user's Favourites
     url   = "http://api.flickr.com/services/rest/?method=flickr.favorites.getList"
     urls.append( (url, "Favourites") )
@@ -296,6 +299,8 @@ if __name__ == '__main__':
         # Get 500 results per page
         url += "&per_page=500"
         pages = page = 1
+
+        url += "&extras=media"
 
         while page <= pages: 
             request = url + "&page=" + str(page)
@@ -321,10 +326,12 @@ if __name__ == '__main__':
                 photoid = photo.getAttribute("id")
 
                 # The target
-                target = dir + "/" + photoid + ".jpg"
+                target = dir + "/" + photoid + ".jpg" # this could actually be wrong
+                if photo.getAttribute("media") == "video":
+                    target = dir + "/" + photoid + ".mov" # and so could this
 
                 # TODO set up sidecar
-                write_sidecar(photoid, photo.getAttribute("secret"), dir)
+                # write_sidecar(photoid, photo.getAttribute("secret"), dir)
 
                 # Skip files that exist
                 if os.access(target, os.R_OK):
